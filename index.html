@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title></title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  
+  <script src="main.js"></script>
+  
+  <div id="content">
+    <div id="menu">
+    <div id="overlay">
+
+    </div>
+    <div id="score">
+      <span id="cash_text" class="center">Cash: 0</span>
+      <span id="value_text">Value: 0</span>
+      <span id="cpc-text">Cash/Click: $0</span>
+    </div>
+    <div id="nav">
+      <button id="nav-earn" class="nav-button on" onclick="showPage('earn')">Earn</button>
+      <button id="nav-inv" class="nav-button" onclick="showPage('inv')">Inventory</button>
+      <button id="nav-shop" class="nav-button" onclick="showPage('shop')">Shop</button>
+      <button id="nav-upgrade" class="nav-button" onclick="showPage('upgrade')">Upgrades</button>
+    </div>
+    </div>
+    <div id="upgrade-page" class="page">
+      <div class="upgrade" id="cpc-upgrade">
+        <span class="upgrade-name">+Cash</span>
+        <span class="upgrade-desc">More cash per click</span>
+        <span id="+cash" class="upgrade-amount">Level: 1</span>
+        <button id="+cash" class="upgrade-button" onclick="upgrade('+cash')">Buy: $100</button>
+      </div>
+      <div class="upgrade" id="luck-upgrade">
+        <span class="upgrade-name">+Luck</span>
+        <span class="upgrade-desc">Higher chance to roll better items</span>
+        <span id="luck" class="upgrade-amount">Level: 1</span>
+        <button id="luck" class="upgrade-button" onclick="upgrade('luck')">Buy: $100</button>
+      </div>
+    </div>
+    <div id="inv-page" class="page">
+      <div id="inv-buttons">
+        <button id="inv-prev">Prev</button>
+        <div id="inv-page-n">1</div>
+        <button id="inv-next">Next</button>
+      </div>
+      <div id="inv-items">
+
+      </div>
+    </div>
+    <div id="shop-page" class="page">
+      <div id="shop-items">
+        
+      </div>
+    </div>
+    <div id="earn-page" class="page show">
+      <button id="clicker">
+        <span id="clicker-text">$</span>
+      </button>
+    </div>
+  
+  </div>
+  
+  
+  
+  
+</body>
+
+</html>
