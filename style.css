@@ -154,7 +154,7 @@ button:active {
 }
 
 
-#upgrade-page {
+#upgrades {
 	display: flex;
 	flex-direction: column;
 	overflow: scroll;
@@ -190,17 +190,13 @@ button:active {
 
 .page {
 	position: absolute;
-	opacity: 0;
 	width: calc(100% - 300px);
 	height: 100%;
-	margin-left:300px;
-	pointer-events: none;
-	z-index: 0;
+	left: 300px;
+	display: none;
 }
-.page.show {
-	opacity: 1;
-	pointer-events: auto;
-	z-index: 999;
+.show {
+	display: block !important;
 }
 
 .upgrade {
@@ -375,6 +371,13 @@ button:active {
 	background-repeat: no-repeat;
 	object-fit: contain;
   }
+  .inner-image.case, .inner-image.key {
+	transform: scale(1.4);
+  }
+  .inner-image.case:hover,
+  .inner-image.key:hover {
+	transform: scale(1.5);
+  }
   .inner-image:hover {
 	transform: scale(1.1);
   }
@@ -475,3 +478,86 @@ button:active {
 	overflow-y: scroll;
 	height: 100%;
 }
+
+.stattrak {
+	position: absolute;
+	width: 40px;
+	height: 40px;
+	top: 100px;
+	left: 110px;
+	transform: scale(1);
+	background: transparent;
+	background-image: url("https://raw.githubusercontent.com/waffold/csgo/main/images/Stattrak.png");
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+
+.popup {
+	position: fixed;
+	width: calc(100% - 300px);
+	height: 100%;
+	left: 300px;
+	background: rgb(40,40,40);
+	display: none;
+	z-index: 999;
+}
+
+/* .popup.up {
+	display: block;
+} */
+
+.popup-header {
+	width: calc(100%);
+	height: 100px;
+	text-align: center;
+	padding-top: 30px;
+}
+
+.popup-close {
+	position: absolute;
+	left: 50px;
+	top: 30px;
+}
+.popup-title {
+	font-size: 40px;
+	font-weight: bold;
+}
+
+.case-items {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 20px;
+	justify-content: center;
+	width: calc(100% - 300px);
+}
+
+.info-img {
+	position: relative;
+	background-color: rgb(65,65,65);
+	transform: scale(1.5);
+	background: transparent;
+	width: 300px;
+	height: 300px;
+	margin-bottom: 100px;
+}
+
+.info-container {
+	display: flex;
+	flex-direction: row;
+	gap: 5px;
+	justify-content: center;
+	width: calc(100%);
+	height: 100%;
+}
+
+.info-container.item-info {
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.info-stat {
+	position: relative;
+}
+
