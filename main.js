@@ -453,5 +453,3 @@ function showPopup(t, e) {
 function getItemData(n) {
 	return gitems.find(a => a.name == n) || false;
 }
-
-
