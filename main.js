@@ -45,13 +45,13 @@ let user = {
 		"luck" : 1
 	},
 	"inv" : [
-		{name : "Karambit | Gamma Doppler", cost : 3458.58, class : "exceedingly_rare", type: "skin", stattrak : true, wear : 'FN'},
-		{name : "Butterfly | Fade", cost : 1457.53, class : "exceedingly_rare", type: "skin", stattrak : false, wear : 'MW'},
-		{name : "Spectrum Case", cost : 0.50, case: 'spectrum', class : "standard", type: "case"},
-		{name : "Spectrum Case Key", cost : 2.40, case: 'spectrum', class : "standard", type: "key"},
-		{name : "Stilleto | Forest DDPAT", cost : 245.3, class : "exceedingly_rare", type: "skin", stattrak : true, wear : 'WW'},
-		{name : "M4A1-S | Vaporwave", cost : 144.32, class : "covert", type: "skin", stattrak : true, wear : 'BS'},
-		{name : "AWP | Atheris", cost : 13.45, class : "restricted", type: "skin", stattrak : false, wear : 'FT'},
+		{name : "Karambit | Gamma Doppler", stattrak : true, t : 'FN'},
+		{name : "Butterfly | Fade", stattrak : false, t : 'MW'},
+		{name : "Spectrum Case", stattrak: false, t: "u"},
+		{name : "Spectrum Case Key", stattrak: false, t: "u"},
+		{name : "Stilleto | Forest DDPAT", stattrak : true, t : 'WW'},
+		{name : "M4A1-S | Vaporwave", stattrak : true, t : 'BS'},
+		{name : "AWP | Atheris", stattrak : false, t : 'FT'},
 	]
 }
 
@@ -61,9 +61,21 @@ let upgrades = {
 }
 
 let gitems = [
-	{name: 'Gamma Case', cost: 0.75,  case: 'gamma', class: 'standard', type: 'case'},
-	{name: 'Spectrum Case', cost: 2.50, case: 'spectrum', class: 'standard', type: 'case'},
-	{name: 'Spectrum Case 2', cost: 1.50, case: 'spectrum2', class: 'standard', type: 'case'}
+	//cases
+	{name: 'Gamma Case', price: 0.75,  case: 'gamma', class: 'standard', type: 'case'}, 
+	{name: 'Spectrum Case', price: 2.50, case: 'spectrum', class: 'standard', type: 'case'}, 
+	{name: 'Spectrum Case 2', price: 1.50, case: 'spectrum2', class: 'standard', type: 'case'},
+
+	//Gamma Case
+	{name: "M4A1-S | Vaporwave", price: 144.32, class: "covert", case: "gamma", type: "skin", stattrak: false},
+	{name: "Karambit | Gamma Doppler", price: 3456.70, class: "exceedingly_rare", case: "gamma", type: "skin", stattrak: false},
+	{name: "Butterfly | Fade", price: 1459.4, class: "exceedingly_rare", case: "gamma", type: "skin", stattrak: false},
+	{name: "Stilleto | Forest DDPAT", price: 180.76, class: "exceedingly_rare", case: "gamma", type: "skin", stattrak: false},
+	{name: "AWP | Atheris", price: 13.45, class: "restricted", case: "gamma", type: "skin", stattrak: false},
+
+	//Keys
+	{name: "Spectrum Case Key", price: 2.40, class: "standard", case: "spectrum", type: "key"}
+	
 ]
 
 function rendUpgrades() {
@@ -100,46 +112,67 @@ function rendInv() {
 	let pp = getItemsPerPage();
 	let items = [];
 	let page = $('#inv-page-n').innerHTML;
+
+	let wears = {
+		'FN' : 1.8,
+		'MW' : 1.6,
+		'FT' : 1.4,
+		'WW' : 1.2,
+		'BS' : 1,
+		'C' : 1,
+		'K' : 1
+	}
 	for(let i = 0; i < user.inv.length; i++) {
-		let e = user.inv[i];
+		let data = getItemData(user.inv[i].name);
+		let price = data.price * wears[user.inv[i].t];
+		let np = (i)/pp;
+
 		let div = document.createElement("div");
 		div.className = "item";
 		div.setAttribute("n", i);
-		let np = (i)/pp;
 		div.setAttribute('p', Math.floor(np));
+
 		let inner = document.createElement("div");
-		inner.className = "item-inner " + e.class + ' ' + e.wear;
-		//inner.innerHTML = '<img class="inner-image" src="https://drive.google.com/thumbnail?id=1_NC2U20fjVv-_h5Dfa61v4BcQe2iugZG&sz=w1000" alt="My Image">';
-		inner.innerHTML = '<img class="inner-image" src="https://drive.google.com/uc?export=view&id=1_NC2U20fjVv-_h5Dfa61v4BcQe2iugZG" alt="My Image">';
+		inner.className = "item-inner " + data.class + ' ' + user.inv[i].t;
+		console.log(data);
+		inner.innerHTML = '<img class="inner-image ' + data.type + '" src="https://raw.githubusercontent.com/waffold/csgo/main/images/' + data.name.replace(" | ", '').replace(' ', '').replace(' ', '') + '.png" alt="My Image">';
+		if(user.inv[i].stattrak) {
+			let st = document.createElement('div');
+			st.className = 'stattrak';
+			inner.appendChild(st);
+		}
+		inner.addEventListener('click', function() {
+			showPopup('item-info', user.inv[i]);
+		})
 	
 		let itemActions = document.createElement('div');
 		itemActions.className = 'itemActions';
 	
 		let title = document.createElement('div');
 		title.className = 'item-title';
-		title.innerHTML = e.name;
+		title.innerHTML = data.name;
 		inner.appendChild(title);
 		
 		let sb = document.createElement('button');
-		sb.innerHTML = "Sell $" + e.cost.toFixed(2);
+		sb.innerHTML = "Sell $" + price.toFixed(2);
 		sb.className = "item-b";
-		let isCase = e.type == 'case';
-		if(e.type == 'skin') {
+		let isCase = data.type == 'case';
+		if(data.type == 'skin') {
 			sb.classList.add("item-sell")
 			let w = document.createElement('span');
 			w.className = "inv-item-wear";
-			w.innerHTML = e.wear;
+			w.innerHTML = user.inv[i].t;
 			inner.appendChild(w);
 			itemActions.appendChild(sb);
 		}
-		if(e.type == 'case') {
+		if(data.type == 'case') {
 			sb.classList.add('case-sell');
 			let ob = document.createElement('button');
 			ob.innerHTML = "Open";
 			ob.className = "item-b case-open";
 			itemActions.appendChild(ob);
 		}
-		if(e.type == 'key') {
+		if(data.type == 'key') {
 			sb.classList.add("item-sell");
 		}
 		
@@ -172,22 +205,28 @@ function rendShop() {
 	$('#shop-items').innerHTML = '';
 	let items = [];
 	for(let i = 0; i < gitems.length; i ++) {
+		console.log(gitems[i].type);
 		if(gitems[i].type == 'case') {
-			let e = gitems[i];
+			let data = getItemData(gitems[i].name);
 			let div = document.createElement('div');
+			let price = data.price;
 			div.className = "item";
 			div.setAttribute('n', i);
 
 			let inner = document.createElement('div');
-			inner.className = "item-inner " + e.class + ' ' + e.wear;
-			inner.innerHTML = '<img class="inner-image" src="https://drive.google.com/thumbnail?id=1_NC2U20fjVv-_h5Dfa61v4BcQe2iugZG&sz=w1000" alt="My Image">';
+			inner.className = "item-inner " + data.class;
+			console.log(data.name);
+			console.log(data.name.replace(" | ", '').replace(' ', '').replace(' ', ''));
+			inner.innerHTML = '<img class="inner-image case" src="https://raw.githubusercontent.com/waffold/csgo/main/images/' + data.name.replace(" | ", '').replace(' ', '').replace(' ', '') + '.png" alt="skin">';
+			inner.addEventListener('click', function() {
+				showPopup('case-info', data);
+			})
 
 			let title = document.createElement('div');
 			title.className = 'item-title';
-			title.innerHTML = e.name;
+			title.innerHTML = data.name;
 
 			inner.appendChild(title);
-			console.log(inner);
 
 			div.appendChild(inner);
 
@@ -196,16 +235,14 @@ function rendShop() {
 
 			let bb = document.createElement('button');
 			bb.className = 'item-b item-sell';
-			bb.innerHTML = "Buy: $" + gitems[i].cost;
+			bb.innerHTML = "Buy: $" + price;
 			bb.addEventListener('click', function() {
 				let n = bb.parentNode.parentNode.getAttribute("n");
-				let a = gitems[n];
+				let a = getItemData(gitems[n]);
 
-				if(user.cash >= a.cost) {
+				if(user.cash >= a.price) {
 					user.inv.push(a);
-					console.log(user.cash, a.cost);
-					user.cash -= a.cost;
-					console.log(user.cash);
+					user.cash -= a.price;
 
 					rendCash();
 				}
@@ -217,7 +254,6 @@ function rendShop() {
 			$('#shop-items').appendChild(div);
 		}
 	}
-	console.log(items);
 }
 
 
@@ -310,10 +346,112 @@ function getItemData(n) {
 	}
 }
 
-function createItem(e, i) {
-	
+let popups = document.getElementsByClassName("popup");
+function showPopup(t, e) {
+	let data = e;
+	console.log(data);
+	for(let i = 0; i<popups.length; i++) {
+		$('#' + popups[i].id).classList.toggle("show", false);
+	}
+	$("#" + t).classList.toggle("show", true);
 
-	return div;
+	$('#' + t).innerHTML = '';
+	let header = document.createElement('div');
+	header.className = 'popup-header';
+
+	let backBtn = document.createElement('button');
+	backBtn.innerHTML = "<< Back";
+	backBtn.className = 'popup-close';
+	backBtn.setAttribute('popup', t);
+	backBtn.addEventListener('click', function() {
+		$('#'+backBtn.getAttribute('popup')).classList.toggle('show', false);
+	})
+	header.appendChild(backBtn);
+
+	if(t == 'case-info') {
+		let items = document.createElement('div');
+		items.className = 'info-container';
+		let title = document.createElement('div');
+		title.className = 'popup-title';
+		title.innerHTML = data.name;
+		header.appendChild(title);
+		let caseContent = gitems.filter(e => e.case == data.case && e.type == 'skin');
+		for(let i = 0; i<caseContent.length; i++) {
+			let data = getItemData(caseContent[i].name);
+			let div = document.createElement('div');
+			div.className = "item";
+
+			let inner = document.createElement('div');
+			inner.className = "item-inner " + data.class;
+			inner.innerHTML = '<img class="inner-image " src="https://raw.githubusercontent.com/waffold/csgo/main/images/' + data.name.replace(" | ", '').replace(' ', '').replace(' ', '') + '.png" alt="skin">';
+
+			let title = document.createElement('div');
+			title.className = 'item-title';
+			title.innerHTML = data.name;
+
+			inner.appendChild(title);
+
+			div.appendChild(inner);
+			items.appendChild(div);
+		}
+		$('#case-info').appendChild(header);
+		$('#case-info').appendChild(items);
+	}
+
+	if(t == 'item-info') {
+		let info = document.createElement('div');
+		let img = document.createElement('img');
+		img.className = "info-img";
+		img.src = "https://raw.githubusercontent.com/waffold/csgo/main/images/" + data.name.replace(" | ", '').replace(' ', '').replace(' ', '') + ".png";
+		img.alt = 'skin';
+		info.className = 'info-container item-info';
+		info.appendChild(img);
+
+		let title = document.createElement('div');
+		title.className = 'popup-title';
+		title.innerHTML = e.name;
+		header.appendChild(title);
+
+		let raritys = {
+			'exceedingly_rare' : 'Exceedingly Rare',
+			'covert' : "Covert",
+			"restricted" : "Restricted"
+		}
+		let wears = {
+			'FN' : 1.8,
+			'MW' : 1.6,
+			'FT' : 1.4,
+			'WW' : 1.2,
+			'BS' : 1,
+			'C' : 1,
+			'K' : 1
+		}
+
+		let infodata = getItemData(e.name);
+
+		let stats = document.createElement('div');
+		let rarity = document.createElement('span');
+		rarity.className = 'info-stat';
+		rarity.innerHTML = 'Rarity: ' + raritys[infodata.class];
+		let st = document.createElement('span');
+		st.className = 'info-stat';
+		st.innerHTML = 'Stattrak: ' + data.stattrak;
+		let price = document.createElement('span');
+		price.className = 'info-stat';
+		let cost = infodata.price * wears[data.t]
+		price.innerHTML = 'Price: ' + cost.toFixed(2);
+
+		info.appendChild(rarity);
+		info.appendChild(st);
+		info.appendChild(price);
+
+		$('#item-info').appendChild(header);
+		$('#item-info').appendChild(info);
+	}
+}
+
+function getItemData(n) {
+	return gitems.find(a => a.name == n) || false;
 }
 
 
