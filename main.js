@@ -96,12 +96,10 @@ function rendCash()	 {
 	user.cash = Number(user.cash.toFixed(2));
 	$('#cash_text').innerHTML = "Cash: " + user.cash.toString();
 
-	
-	$('#cpc-text').innerHTML = "Cash/Click: $" + user.upgrades["+cash"];
-
 	let total = 0;
 	for(let i = 0; i < user.inv.length; i++) {
-		total += user.inv[i].cost;
+		let data = getItemData(user.inv[i].name);
+		total += data.price;
 	}
 	$('#value_text').innerHTML = "Value: $" + total.toFixed(2);
 }
@@ -119,11 +117,11 @@ function rendInv() {
 		'FT' : 1.4,
 		'WW' : 1.2,
 		'BS' : 1,
-		'C' : 1,
-		'K' : 1
+		'u' : 1,
 	}
 	for(let i = 0; i < user.inv.length; i++) {
 		let data = getItemData(user.inv[i].name);
+		console.log(user.inv[i].t);
 		let price = data.price * wears[user.inv[i].t];
 		let np = (i)/pp;
 
@@ -134,7 +132,6 @@ function rendInv() {
 
 		let inner = document.createElement("div");
 		inner.className = "item-inner " + data.class + ' ' + user.inv[i].t;
-		console.log(data);
 		inner.innerHTML = '<img class="inner-image ' + data.type + '" src="https://raw.githubusercontent.com/waffold/csgo/main/images/' + data.name.replace(" | ", '').replace(' ', '').replace(' ', '') + '.png" alt="My Image">';
 		if(user.inv[i].stattrak) {
 			let st = document.createElement('div');
@@ -205,7 +202,6 @@ function rendShop() {
 	$('#shop-items').innerHTML = '';
 	let items = [];
 	for(let i = 0; i < gitems.length; i ++) {
-		console.log(gitems[i].type);
 		if(gitems[i].type == 'case') {
 			let data = getItemData(gitems[i].name);
 			let div = document.createElement('div');
@@ -215,8 +211,6 @@ function rendShop() {
 
 			let inner = document.createElement('div');
 			inner.className = "item-inner " + data.class;
-			console.log(data.name);
-			console.log(data.name.replace(" | ", '').replace(' ', '').replace(' ', ''));
 			inner.innerHTML = '<img class="inner-image case" src="https://raw.githubusercontent.com/waffold/csgo/main/images/' + data.name.replace(" | ", '').replace(' ', '').replace(' ', '') + '.png" alt="skin">';
 			inner.addEventListener('click', function() {
 				showPopup('case-info', data);
@@ -299,6 +293,10 @@ function showPage(a) {
 			nb[i].classList.toggle("on", true);
 		}
  	}
+
+	for(let i = 0; i < popups.length; i++) {
+		popups[i].classList.toggle('show', false);
+	}
 }
 
 function upgrade(a) {
@@ -349,7 +347,6 @@ function getItemData(n) {
 let popups = document.getElementsByClassName("popup");
 function showPopup(t, e) {
 	let data = e;
-	console.log(data);
 	for(let i = 0; i<popups.length; i++) {
 		$('#' + popups[i].id).classList.toggle("show", false);
 	}
@@ -417,14 +414,22 @@ function showPopup(t, e) {
 			'covert' : "Covert",
 			"restricted" : "Restricted"
 		}
-		let wears = {
+		let wearsToMult = {
 			'FN' : 1.8,
 			'MW' : 1.6,
 			'FT' : 1.4,
 			'WW' : 1.2,
 			'BS' : 1,
-			'C' : 1,
-			'K' : 1
+			'u' : 1
+		}
+
+		let wears = {
+			'FN' : "Factory New",
+			'MW' : "Minimal Wear",
+			'FT' : "Field Tested",
+			'WW' : "Well Worn",
+			'BS' : "Battle Scarred",
+			'u' : "None"
 		}
 
 		let infodata = getItemData(e.name);
@@ -438,12 +443,18 @@ function showPopup(t, e) {
 		st.innerHTML = 'Stattrak: ' + data.stattrak;
 		let price = document.createElement('span');
 		price.className = 'info-stat';
-		let cost = infodata.price * wears[data.t]
-		price.innerHTML = 'Price: ' + cost.toFixed(2);
+		let cost = infodata.price * wearsToMult[data.t]
+		price.innerHTML = 'Price: $' + cost.toFixed(2);
+		let wear = document.createElement('span');
+		wear.className = 'info-stat';
+		console.log(data);
+		wear.innerHTML = "Wear: " + wears[data.t]
+
 
 		info.appendChild(rarity);
 		info.appendChild(st);
 		info.appendChild(price);
+		info.appendChild(wear);
 
 		$('#item-info').appendChild(header);
 		$('#item-info').appendChild(info);
@@ -453,3 +464,5 @@ function showPopup(t, e) {
 function getItemData(n) {
 	return gitems.find(a => a.name == n) || false;
 }
+
+
