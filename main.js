@@ -52,12 +52,22 @@ let user = {
 		{name : "Stilleto | Forest DDPAT", stattrak : true, t : 'WW'},
 		{name : "M4A1-S | Vaporwave", stattrak : true, t : 'BS'},
 		{name : "AWP | Atheris", stattrak : false, t : 'FT'},
+		{name: "Spectrum Case 2", stattrak : false, t : "u"}
 	]
 }
 
 let upgrades = {
 	"+cash" : {"max" : 10, "cost" : 76, "costscale" : 1.5},
 	"luck" : {"max" : 10, "cost" : 83, "costscale" : 1.6}
+}
+
+let tToMult = {
+	'FN' : 1.8,
+	'MW' : 1.6,
+	'FT' : 1.4,
+	'WW' : 1.2,
+	'BS' : 1,
+	'u' : 1,
 }
 
 let gitems = [
@@ -74,7 +84,9 @@ let gitems = [
 	{name: "AWP | Atheris", price: 13.45, class: "restricted", case: "gamma", type: "skin", stattrak: false},
 
 	//Keys
-	{name: "Spectrum Case Key", price: 2.40, class: "standard", case: "spectrum", type: "key"}
+	{name: "Spectrum Case 2 Key", price: 1.75, class: "standard", case: "spectrum2", type: "key"},
+	{name: "Spectrum Case Key", price: 2.40, class: "standard", case: "spectrum", type: "key"},
+	{name: "Gamma Case Key", price: 1.75, class: "standard", case: "gamma", type: "key"}
 	
 ]
 
@@ -99,7 +111,7 @@ function rendCash()	 {
 	let total = 0;
 	for(let i = 0; i < user.inv.length; i++) {
 		let data = getItemData(user.inv[i].name);
-		total += data.price;
+		total += data.price * tToMult[user.inv[i].t];
 	}
 	$('#value_text').innerHTML = "Value: $" + total.toFixed(2);
 }
@@ -110,19 +122,9 @@ function rendInv() {
 	let pp = getItemsPerPage();
 	let items = [];
 	let page = $('#inv-page-n').innerHTML;
-
-	let wears = {
-		'FN' : 1.8,
-		'MW' : 1.6,
-		'FT' : 1.4,
-		'WW' : 1.2,
-		'BS' : 1,
-		'u' : 1,
-	}
 	for(let i = 0; i < user.inv.length; i++) {
 		let data = getItemData(user.inv[i].name);
-		console.log(user.inv[i].t);
-		let price = data.price * wears[user.inv[i].t];
+		let price = data.price * tToMult[user.inv[i].t];
 		let np = (i)/pp;
 
 		let div = document.createElement("div");
@@ -132,7 +134,7 @@ function rendInv() {
 
 		let inner = document.createElement("div");
 		inner.className = "item-inner " + data.class + ' ' + user.inv[i].t;
-		inner.innerHTML = '<img class="inner-image ' + data.type + '" src="https://raw.githubusercontent.com/waffold/csgo/main/images/' + data.name.replace(" | ", '').replace(' ', '').replace(' ', '') + '.png" alt="My Image">';
+		inner.innerHTML = '<img class="inner-image ' + data.type + '" src="https://raw.githubusercontent.com/waffold/csgo/main/images/' + data.name.replace(" | ", '').replace(' ', '').replace(' ', '').replace(' ', '') + '.png" alt="My Image">';
 		if(user.inv[i].stattrak) {
 			let st = document.createElement('div');
 			st.className = 'stattrak';
@@ -167,7 +169,11 @@ function rendInv() {
 			let ob = document.createElement('button');
 			ob.innerHTML = "Open";
 			ob.className = "item-b case-open";
+			ob.addEventListener('click', function() {
+				showPopup('open-case', user.inv[i]);
+			})
 			itemActions.appendChild(ob);
+
 		}
 		if(data.type == 'key') {
 			sb.classList.add("item-sell");
@@ -178,7 +184,8 @@ function rendInv() {
 		itemActions.insertBefore(sb, itemActions.firstChild);
 		sb.addEventListener('click', function() {
 			let a = sb.parentNode.parentNode.getAttribute("n");
-			let price = user.inv[a].cost;
+			let data = getItemData(user.inv[a].name);
+			let price = data.price * tToMult[user.inv[a].t];
 
 			user.cash += price;
 			user.inv.splice(a, 1);
@@ -232,10 +239,13 @@ function rendShop() {
 			bb.innerHTML = "Buy: $" + price;
 			bb.addEventListener('click', function() {
 				let n = bb.parentNode.parentNode.getAttribute("n");
-				let a = getItemData(gitems[n]);
-
+				let a = getItemData(gitems[n].name);
 				if(user.cash >= a.price) {
-					user.inv.push(a);
+					user.inv.push({
+						name: a.name,
+						stattrak: false,
+						t: 'u'
+					});
 					user.cash -= a.price;
 
 					rendCash();
@@ -330,7 +340,7 @@ function getItemsPerPage() {
 	let margin = 300;
 	if(window.innerWidth < 480) {margin = 50}
 	let x = Math.floor((window.innerWidth - margin)/170);
-	let y = Math.floor((window.innerHeight - 100)/230);
+	let y = Math.floor((window.innerHeight - 80)/260);
 	if(x*y == 0) {return 1}
 	if(y>3) {y = 3}
 	return x*y;
@@ -412,17 +422,9 @@ function showPopup(t, e) {
 		let raritys = {
 			'exceedingly_rare' : 'Exceedingly Rare',
 			'covert' : "Covert",
-			"restricted" : "Restricted"
+			"restricted" : "Restricted",
+			"standard" : "Standard"
 		}
-		let wearsToMult = {
-			'FN' : 1.8,
-			'MW' : 1.6,
-			'FT' : 1.4,
-			'WW' : 1.2,
-			'BS' : 1,
-			'u' : 1
-		}
-
 		let wears = {
 			'FN' : "Factory New",
 			'MW' : "Minimal Wear",
@@ -443,11 +445,10 @@ function showPopup(t, e) {
 		st.innerHTML = 'Stattrak: ' + data.stattrak;
 		let price = document.createElement('span');
 		price.className = 'info-stat';
-		let cost = infodata.price * wearsToMult[data.t]
+		let cost = infodata.price * tToMult[data.t]
 		price.innerHTML = 'Price: $' + cost.toFixed(2);
 		let wear = document.createElement('span');
 		wear.className = 'info-stat';
-		console.log(data);
 		wear.innerHTML = "Wear: " + wears[data.t]
 
 
@@ -459,6 +460,90 @@ function showPopup(t, e) {
 		$('#item-info').appendChild(header);
 		$('#item-info').appendChild(info);
 	}
+	if(t == 'open-case') {
+		let data = getItemData(e.name);
+
+		let title = document.createElement('div');
+		title.className = 'popup-title';
+		title.innerHTML = data.name;
+		header.appendChild(title);
+		$('#open-case').appendChild(header);
+		let actionBtns = document.createElement('div');
+		actionBtns.className = "case-open-btns";
+		let openBtn = document.createElement('button');
+		openBtn.innerHTML = "Open Case";
+		openBtn.style.width = "100px";
+		let buyKeyBtn = document.createElement('button');
+		console.log(data.case, gitems);
+		console.log((gitems.filter(a => a.case == data.case && a.type == 'key')));
+		let key = getItemData((gitems.filter(a => a.case == data.case && a.type == 'key'))[0].name);
+		buyKeyBtn.innerHTML = "Buy key: $" + key.price;
+		buyKeyBtn.style.width = "100px";
+
+		let keyCount = document.createElement('div');
+		keyCount.className = 'key-count';
+		keyCount.id = 'key-count';
+		rendKeyCount(data, keyCount);
+		buyKeyBtn.addEventListener('click', function() {
+			let key = getItemData((gitems.filter(a => a.case == data.case && a.type == 'key'))[0].name);
+			console.log(key, key.price);
+			if(user.cash >= key.price) {
+				console.log('bought');
+				user.inv.push({
+					name: key.name,
+					stattrak: false,
+					t: 'u'
+				})
+				console.log(key.price, user.inv);
+				user.cash -= key.price;
+				rendCash();
+				rendInv();
+				rendKeyCount(data, keyCount);
+			}
+		})
+
+		actionBtns.appendChild(openBtn);
+		actionBtns.appendChild(buyKeyBtn);
+		actionBtns.appendChild(keyCount);
+
+		let info = document.createElement('div');
+		info.className = 'info-container';
+		let caseContent = gitems.filter(e => e.case == data.case && e.type == 'skin');
+		for(let i = 0; i<caseContent.length; i++) {
+			let item = getItemData(caseContent[i].name);
+			let div = document.createElement('div');
+			div.className = "item";
+
+			let inner = document.createElement('div');
+			inner.className = "item-inner " + item.class;
+			inner.innerHTML = '<img class="inner-image " src="https://raw.githubusercontent.com/waffold/csgo/main/images/' + item.name.replace(" | ", '').replace(' ', '').replace(' ', '') + '.png" alt="skin">';
+
+			let title = document.createElement('div');
+			title.className = 'item-title';
+			title.innerHTML = item.name;
+
+			inner.appendChild(title);
+
+			div.appendChild(inner);
+			info.appendChild(div);
+		}
+		$('#open-case').appendChild(actionBtns);
+		info.style["margin-top"] = "40px";
+		$('#open-case').appendChild(info);
+	}
+}
+
+function rendKeyCount(data, k) {
+	let keys = 0;
+	for(let i = 0; i < user.inv.length; i++) {
+		let itemdata = getItemData(user.inv[i].name);
+		if(itemdata.type == "key" && itemdata.case == data.case) {
+			keys ++;
+		}
+	}
+	//k is the dom element for key count
+	k.innerHTML = "Keys: " + keys;
+
 }
 
 function getItemData(n) {
