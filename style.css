@@ -5,7 +5,7 @@
 	-webkit-user-select: none;
 }
 #cash_text {
-	margin-top: 20px;
+	margin-top: 10px;
 	color: rgb(200,200,200);
 	font-size: 20px;
 	font-weight: bold;
@@ -24,9 +24,11 @@
 	flex-direction: column;
 	gap: 0px;
 	width: 300px;
+	padding: 0px;
 	height: 100vh;
 	background-color: rgb(60,60,60);
-	overflow-y: scroll;
+	overflow-x: hidden;
+	overflow-y: hidden;
 }
 
 #content {
@@ -35,10 +37,9 @@
 	gap: 0px;
 	width: 100%;
 	height: 100%;
+	user-select: none;
 
 	color: rgb(200,200,200);
-
-	user-select: none;
 }
 
 
@@ -93,7 +94,7 @@ button:active {
 	flex-direction: column;
 	align-items: center;
 	top: 140px;
-	height: calc(100vh - 220px);
+	height: calc(100vh - 120px);
 	gap: 0px;
 	width: 280px;
 	flex-shrink: 0;
@@ -105,7 +106,7 @@ button:active {
 	position: relative;
 	background-color: rgb(60,60,60);
 	color: rgb(200,200,200);
-	font-size: 20px;
+	font-size: 15px;
 	border-width: 0px;
 	border-style: solid;
 	width: calc(100% - 20px);
@@ -157,7 +158,9 @@ button:active {
 #upgrades {
 	display: flex;
 	flex-direction: column;
-	overflow: scroll;
+	overflow-y: scroll;
+
+	height: 100vh;
 }
 
 #clicker {
@@ -194,12 +197,14 @@ button:active {
 	height: 100%;
 	left: 300px;
 	display: none;
+	overflow-y: hidden;
 }
 .show {
 	display: block !important;
 }
 
 .upgrade {
+	position: relative;
 	background-color: rgb(80,80,80);
 	width: 100%;
 	height: 80px;
@@ -231,7 +236,7 @@ button:active {
 .upgrade-button {
 	position: absolute;
 	margin-top: 10px;
-	margin-left: calc(100% -  170px);
+	margin-left: calc(100% - 180px);
 	font-size: 15px;
 	text-align: left;
 	padding-left: 20px;
@@ -276,8 +281,8 @@ button:active {
 		width: 40px;
 	}
 
-	.page.show {
-		margin-left: 40px;
+	.page{
+		left: 40px;
 		width: calc(100% - 50px);
 	}
 
@@ -560,5 +565,26 @@ button:active {
 
 .info-stat {
 	position: relative;
+}
+
+.case-open-btns {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 40px;
+}
+
+.key-count {
+	width: 60px;
+	height: 36px;
+	margin-left: -35px;
+	background-color: rgb(45,45,45);
+	border: 2px solid rgb(100,100,100);
+	border-radius: 2px;
+	font-weight: bold;
+	font-size: 12px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
